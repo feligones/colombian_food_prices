@@ -17,6 +17,8 @@ nltk = "*"
 statsmodels = "*"
 sklearn = "*"
 scikit-learn = "*"
+xgboost = "*"
+cmake = "*"
 
 [dev-packages]
 
