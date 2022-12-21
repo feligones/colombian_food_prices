@@ -19,6 +19,10 @@ sklearn = "*"
 scikit-learn = "*"
 xgboost = "*"
 cmake = "*"
+fastapi = "*"
+pydantic = "*"
+uvicorn = "*"
+httpx = "*"
 
 [dev-packages]
 

@@ -4,7 +4,6 @@ import numpy as np
 from statsmodels.tsa.seasonal import seasonal_decompose, STL
 from statsmodels.tsa.deterministic import DeterministicProcess
 
-
 def make_lags(ts, lags):
     return pd.concat(
         {
