@@ -6,10 +6,6 @@ name = "pypi"
 [packages]
 pandas = "*"
 numpy = "*"
-matplotlib = "*"
-seaborn = "*"
-openpyxl = "*"
-ipykernel = "*"
 requests = "*"
 tqdm = "*"
 unidecode = "*"
@@ -25,6 +21,10 @@ uvicorn = "*"
 httpx = "*"
 
 [dev-packages]
+matplotlib = "*"
+seaborn = "*"
+openpyxl = "*"
+ipykernel = "*"
 
 [requires]
 python_version = "3.10"

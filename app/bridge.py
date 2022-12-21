@@ -1,11 +1,11 @@
-import os
-import sys
+# import os
+# import sys
 
-print(os.getcwd())
-sys.path.append(os.getcwd())
+# print(os.getcwd())
+# sys.path.append(os.getcwd())
 
 from fastapi import FastAPI
-from app.conf import utils as uts
+from conf import utils as uts
 from pydantic import BaseModel
 
 
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     import uvicorn
 
     # For local development:
-    uvicorn.run("bridge:app", port=3000, reload=True)
+    #uvicorn.run("bridge:app", port=3000, reload=True)
 
     # For Docker deployment:
-    # uvicorn.run("bridge:app", host='0.0.0.0', port=80)
+    uvicorn.run("bridge:app", host='0.0.0.0', port=80)
