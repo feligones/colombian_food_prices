@@ -5,12 +5,27 @@ from statsmodels.tsa.seasonal import seasonal_decompose, STL
 from statsmodels.tsa.deterministic import DeterministicProcess
 
 def make_lags(ts, lags):
-    return pd.concat(
+    """
+    This function computes the lagged values of a time series 
+    and returns each lag as a feature column.
+    
+    Args:
+        ts (pd.Series): time series to compute lags
+        lags (int): number of lags to be computed.
+
+    Returns:
+        lags_df (pd.DataFrame): dataframe containing the lagged 
+                                values of the input time series 
+                                as columns.
+    """
+    lags_df = pd.concat(
         {
             f'y_lag_{i}': ts.shift(i)
             for i in range(1, lags + 1)
         },
         axis=1)
+
+    return lags_df
 
 def make_lags_features(ts, lags):
     simple_features = {

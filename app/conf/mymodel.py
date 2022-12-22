@@ -1,8 +1,6 @@
 
 import pandas as pd
 import numpy as pd
-import pickle
-import json
 
 class MyModel():
     def __init__(self, final_predictions, routing_dicts, forecast_date):
