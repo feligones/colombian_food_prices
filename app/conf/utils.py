@@ -10,11 +10,11 @@ from nltk.tokenize import word_tokenize
 import re
 
 def dump_artifact(artifact, artifact_name, path):
-    with open(path+artifact_name, 'wb') as handle:
+    with open(path+artifact_name+'.pkl', 'wb') as handle:
         pickle.dump(artifact, handle, protocol=pickle.HIGHEST_PROTOCOL)
         
 def load_artifact(artifact_name, path):
-    with open(path+artifact_name, 'rb') as handle:
+    with open(path+artifact_name+'.pkl', 'rb') as handle:
         artifact = pickle.load(handle)
     return artifact
 

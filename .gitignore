@@ -1,4 +1,5 @@
 *.xlsx
 *.csv
 .ipynb_checkpoints
-
+*.pkl
+*.pickle
