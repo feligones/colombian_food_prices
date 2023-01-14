@@ -5,7 +5,7 @@ LOCAL_ARTIFACTS_PATH = 'artifacts/'
 FINAL_PRICE_DATASET = "final_prices_dataset.csv"
 
 REMOTE_FILE_PATHS = [
-    "series-historicas-precios-mayoristas-06-12-22.xlsx",
+    "series-historicas-precios-mayoristas-2022.xlsx",
     "series-historicas-precios-mayoristas-2021.xlsx",
     "series-historicas-precios-mayoristas-2020.xlsx",
     "series-historicas-precios-mayoristas-2019.xlsx",

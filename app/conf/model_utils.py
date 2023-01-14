@@ -28,21 +28,39 @@ def make_lags(ts, lags):
     return lags_df
 
 def make_lags_features(ts, lags):
+    """
+    This function computes the lagged values of a time series 
+    and returns each lag as a feature column. Also it computes 
+    rolling stats from the same lags as other features. In 
+    this case, the std of all the lags.
+    
+    Args:
+        ts (pd.Series): time series to compute lags
+        lags (int): number of lags to be computed.
+
+    Returns:
+        lags_df (pd.DataFrame): dataframe containing the lagged 
+                                values of the input time series 
+                                and its rolling stats as columns.
+    """
     simple_features = {
         f'y_lag_{i}': ts.shift(i)
         for i in range(1, lags + 1)
     }
     rolling_features = {
-        f'y_rolling_std': ts.shift(1).rolling(lags).std()
+        'y_rolling_std': ts.shift(1).rolling(lags).std(),
+        #'y_rolling_mean': ts.shift(1).rolling(lags).mean(),
     }
     
-    return pd.concat(
+    lags_df = pd.concat(
         {
             **simple_features,
             **rolling_features
         }
         ,
         axis=1)
+    
+    return lags_df
 
 def get_X_det(y, forecast_steps = 1):
     res_robust = STL(y, period=12, robust=True).fit()
