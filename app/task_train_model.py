@@ -90,7 +90,7 @@ feature_pipeline.fit(multi_X_2)
 trans_multi_X_2 = feature_pipeline.transform(multi_X_2)
 
 # Fit residual model and get fitted values
-model_2, multi_y_pred_2 = muts.get_model(multi_y_2, trans_multi_X_2, KNeighborsRegressor(), return_residuals=False)
+model_2, multi_y_pred_2 = muts.get_model(multi_y_2, trans_multi_X_2, LinearRegression(), return_residuals=False)
 
 # Ensamble final model fitted values
 multi_y_pred_1['y_pred'] = multi_y_pred_2 + multi_y_pred_1[0]
