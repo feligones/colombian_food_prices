@@ -35,7 +35,6 @@ prices_dataframe['department'] = prices_dataframe['market'].str.split(',',expand
 prices_dataframe['group'] = prices_dataframe['group'].apply(uts.clean_text)
 prices_dataframe['product'] = prices_dataframe['product'].apply(uts.clean_text)
 prices_dataframe['market'] = prices_dataframe['market'].apply(uts.clean_text)
-prices_dataframe['department'] = prices_dataframe['department'].apply(uts.clean_text)
 
 print("Data processing: Done!")
 
