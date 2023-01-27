@@ -11,10 +11,17 @@ from sklearn.linear_model import LinearRegression
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.neighbors import KNeighborsRegressor
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
+# Parse command line arguments
+parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
+parser.add_argument("--prices_dataframe-name", default="prices_dataframe", help="Input Prices Dataframe")
+parser.add_argument("--model-name", default='model', help="Output Prediction Artifact Name")
+args = vars(parser.parse_args())
+#print(args)
 
 # Import Prices Dataset
-prices_dataset = uts.load_artifact('prices_dataframe', sts.LOCAL_ARTIFACTS_PATH)
+prices_dataset = uts.load_artifact(args["prices_dataframe_name"], sts.LOCAL_ARTIFACTS_PATH)
 prices_dataset['date'] = pd.to_datetime(prices_dataset['date'])
 
 # Set ID for each series (group-product-market)
@@ -138,4 +145,4 @@ routing_dicts = {
 model = MyModel(final_predictions, routing_dicts, forecast_date)
 
 # Save Model as artifact
-uts.dump_artifact(model, 'model', sts.LOCAL_ARTIFACTS_PATH)
+uts.dump_artifact(model, args["model_name"], sts.LOCAL_ARTIFACTS_PATH)

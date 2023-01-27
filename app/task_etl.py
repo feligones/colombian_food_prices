@@ -7,6 +7,14 @@ from conf import settings as sts
 from conf import utils as uts
 import nltk
 nltk.download('punkt')
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+
+# Parse command line arguments
+parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
+parser.add_argument("--prices_dataframe-name", default="prices_dataframe", help="Output Prices Dataframe")
+args = vars(parser.parse_args())
+#print(args)
+
 
 # Consolidate Dataset from Remote Separate Excel Files
 _dataframe_list = []
@@ -56,4 +64,4 @@ prices_dataframe.columns = ['date', 'group', 'product', 'market', 'mean_price']
 print("Batch reindexing and series selection: Done!")
 
 # Save DataFrame as Artifact
-uts.dump_artifact(prices_dataframe, 'prices_dataframe', path=sts.LOCAL_ARTIFACTS_PATH)
+uts.dump_artifact(prices_dataframe, args['prices_dataframe_name'], path=sts.LOCAL_ARTIFACTS_PATH)
