@@ -19,6 +19,7 @@ fastapi = "*"
 pydantic = "*"
 uvicorn = "*"
 httpx = "*"
+openpyxl = "*"
 
 [dev-packages]
 matplotlib = "*"

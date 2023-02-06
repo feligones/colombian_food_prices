@@ -27,12 +27,12 @@ model.fit(train_dataset)
 print("Fit model on Training Set: Done!")
 
 # Evaluate Model on Test Set (last observed price)
-model.evaluate(test_dataset)
+error_stats = model.evaluate(test_dataset)
 print("Evaluate Model on Test Set: Done!")
 
 # Fit Model on Complete DataSet
 model.fit(prices_dataset)
-print(model.mape_desc)
+print(error_stats)
 print("Fit model on Complete Set: Done!")
 
 # Save Model as artifact

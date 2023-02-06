@@ -18,6 +18,18 @@ class MyModel():
         self.forecast_date = '2022-12'
     
     def fit(self, prices_dataset):
+        """
+        This method fits the two stage model to all the time series present in 
+        prices_dataset and saves the next-month predictions for inference time.
+
+        Args:
+            prices_dataset (pd.Dataframe): dataframe containing the historical
+                                           data from all the time series to 
+                                           forecast.
+
+        Returns:
+            None
+        """
         # Set ID for each series (group-product-market)
         prices_dataset['series_id'] = prices_dataset.groupby(['group', 'product', 'market']).ngroup()
         get_date_range = lambda start: pd.date_range(start = start, end = prices_dataset['date'].max(), freq = 'MS')
@@ -130,6 +142,19 @@ class MyModel():
         self.product_to_series_dict = prices_dataset[['product', 'series_id']].drop_duplicates().groupby(['product'])['series_id'].apply(lambda x: list(np.unique(x))).to_dict()
     
     def evaluate(self, test_dataset):
+        """
+        This method computes the MAPE error for each time serie that the model 
+        was fitted on and computes aggregate statistics. 
+
+        Args:
+            test_dataset (pd.DataFrame): pandas dataframe containing the true 
+                                         value (last observed price) for each 
+                                         time serie that the model was fitted on.
+
+        Returns:
+            mape_desc (dict): dictionary containing the aggregate statistics of 
+                              the time series MAPE error on the test set.
+        """
         test_dataset_copy = test_dataset.copy()
         
         test_dataset_copy['pred_price'] = test_dataset_copy.apply(lambda x: self.predict_product_market(x['product'], x['market']), axis = 1).apply(lambda x: x.get('point'))
@@ -139,6 +164,8 @@ class MyModel():
         mape_desc = test_dataset_copy['mape'].describe().apply(lambda x:np.round(x, 3)).to_dict()
         
         self.mape_desc = {'mape_'+key: value for key,value in mape_desc.items() if key != 'count'}
+
+        return mape_desc
     
     def make_lags(self, ts, lags):
         """
@@ -307,10 +334,18 @@ class MyModel():
 
         return pred
 
-
-
     def predict_product(self, product):
+        """
+        This method returns a dict of the forecasted prices for a specified 
+        product in all the markets it is traded.
 
+        Args:
+            product (string): queried product to get forecasted prices for.
+
+        Returns:
+            predictions (dict): dict containing the point forecast and intervals 
+                                for every market the specified product trades.
+        """
         series_for_product = self.product_to_series_dict.get(product, [])
         predictions = {}
 
@@ -325,6 +360,18 @@ class MyModel():
         return predictions
 
     def predict_product_market(self, product, market):
+        """
+        This method returns a dict of the forecasted price for a specified 
+        product in a specific market.
+
+        Args:
+            product (string): queried product to get forecasted prices for.
+            market (string): queried market to get forecasted prices for.
+
+        Returns:
+            prediction (dict): dict containing the point forecast and intervals 
+                               for the specified product and market.
+        """
         series_for_product_market = self.series_to_id_dict.get((product, market), -1)
 
         prediction = {}
@@ -337,7 +384,13 @@ class MyModel():
         return prediction
 
     def get_model_info(self):
-        
+        """
+        This method returns a dict containing information about the fitted model, 
+        including the forecast date and last month MAPE error statistics.
+
+        Returns:
+            model_info (dict): dict containing model info.
+        """
         model_info = {
             'model_name': 'Next-Month Colombian Fruit and Veg Prices Predictor',
             'model_version': '1',
