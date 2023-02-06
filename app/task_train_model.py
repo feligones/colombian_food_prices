@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 from conf import settings as sts
 from conf import utils as uts
-from conf import model_utils as muts
 from conf.mymodel import MyModel
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
