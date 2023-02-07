@@ -28,7 +28,7 @@ Finally, an open-access dashboard would allow the user to see price evolution an
 
 ### 1. Extract, Transform and Load
 #### Inputs 
-* Remote XLSX Files: XLSX files located at https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa.
+* Remote XLSX Files: XLSX files located at https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/
 
 #### Task
 * GET request each XLSX file corresponding to each year starting from 2013 up to 2022 containing the average monthly price for each product in each market.
@@ -45,9 +45,21 @@ Finally, an open-access dashboard would allow the user to see price evolution an
 * prices_dataframe: pandas DataFrame that contains the selected time series to forecast
 
 #### Task
-* 
+* Load the artifact containing the historical price infomration of the selected time series.
+* Train-Test Split: for every time series the training set are all the prices observed until the second last. The test set consists of the last observed value of each time series.
+* Fit the forecasting model on the training set and evaluate its one-step forward predictions on the test set.
+* Fit again the forecasting model on all the observed data (training + test set)
+* Save fitted model as an artifact.
 
 #### Outputs
-* model: dict-class object storing the key value prediction for each product-market price series.
+* model: MyModel class that contains the out-of-sample next-month predictions.
 
-### API
+### 3. API
+#### Inputs 
+* model: MyModel class object
+
+#### Task
+* Receive HTTP requests   
+* Validate request parameters: product and market
+* Return predictions from (POST) requests of products and markets.
+* Return model information from (GET) request.
