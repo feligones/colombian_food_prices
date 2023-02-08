@@ -1,5 +1,5 @@
 # Time Series Forecasting Model
-The forecasting method consists of a model that uses historic price information from a specific product and group characteristics. The methodology is based on Ryan Holbrook's great [Kaggle time series forecasting course](https://www.kaggle.com/learn/time-series).
+The forecasting method consists of a model that uses historic price information from each specific product and group characteristics. The methodology is based on Ryan Holbrook's great [Kaggle time series forecasting course](https://www.kaggle.com/learn/time-series).
 
 The modeling process is shown in the following diagram:
 
@@ -9,11 +9,11 @@ The modeling process is shown in the following diagram:
 ## 2-Step Forecasting Method
 ### First-Step: Deterministic Model
 Each raw prices time series is de-trended and de-seasonalized by fitting a time deterministic model using Linear Regression.
-Here the inputs are a bias term, seasonal dummies for each-but-one month and 2nd order time deterministic features.
+Here the inputs are a bias term, seasonal dummies for each-but-one month and 2nd order time deterministic trend features.
 
 $$P_{it} = \beta_{i0} + \Theta_i*sea\_dum_t + \alpha_{i}t  + \gamma_{i} t^2$$
 
-Following [Hyndman, R.J., & Athanasopoulos, G. (2021)](https://otexts.com/fpp3/stlfeatures.html), STL decomposition allows us to measure the strenght of trend and seasonality in each time series and, therefore, determine if this components should be controlled for. Recall that the decomposition is written as:
+Following [Hyndman, R.J., & Athanasopoulos, G. (2021)](https://otexts.com/fpp3/stlfeatures.html), STL decomposition allows us to measure the strenght of trend and seasonality in each time series and determine if these components should be controlled for. Recall that the decomposition is written as:
 
 $$P_t = T_t + S_t + R_t$$
 
@@ -47,29 +47,28 @@ $$
 \end{cases}
 $$
 
-The residuals of the fitted deterministic model ($P_{it} - \hat{P_{it}}$) are saved as well as the (partial) out-of-sample prediction ($P_{it+1}$).
+The residuals of the fitted deterministic model ($P_{it} - \hat{P_{it}}$) are saved as well as the (partial) out-of-sample prediction ($\hat{P_{it+1}}$).
 
 ### Second-Step: Residual Model
 The 2nd-stage model uses the residuals of all the time series fitted separatelly in the 1st-stage. The residuals in $t$ are the model outputs and the inputs are the residuals in $t-1$, $t-2$ and $t-3$, the standard deviation of these lags and a dummy feature associated with the time series' product group. 
 
-Any supervised learning algorithm would work, since we have *X*s and a *y*. We chose sklearn's Linear Regression for simplicity.
-
-The forecast of the model are the predicted residuals for all the price series in $t+1$.
+Any supervised learning algorithm would work, since we have *X*s and a *y*. We chose sklearn's Linear Regression for simplicity. The output of the model are the predicted residuals of all the price series in $t+1$.
 
 ## Final Prediction
-The final prediction is the sum of the out-of-sample deteministic (1st-stage) prediction and the residual (2nd-stage) prediction. One way to put it is that the final prediction is the sum of the predicted trend and seasonality in $t+1$ given by the deterministic model, and the remainder in the same period given by the residual model.
+The final prediction is the sum of the out-of-sample deteministic (1st-stage) and residual (2nd-stage) predictions. One way to put it is that the final prediction is the sum of the predicted trend and seasonality in $t+1$ given by the deterministic model and the remainder in the same period given by the residual model.
 
-The forecast intervals (at a 95% confidence level) are given by:
+We include the prediction intervals to the point forecast as a measure of certainty of the latter. We use the naive approach mentioned by [Hyndman, R.J., & Athanasopoulos, G. (2021)](https://otexts.com/fpp2/prediction-intervals.html). Assuming a 95% confidence level, the intervals are given by:
+
 $$P_{T+h|T} \pm 1.96 \hat{\sigma_h}$$
 
-This assumes that the distribution of future errors is normal. We compute $\hat{\sigma_h}$ in a naive way by estimating the standard deviation of the residuals of the 1st stage + 2nd stage fitted values.
+This assumes that the distribution of future errors is *normal*. We estimate $\hat{\sigma_h}$ as the standard deviation of the residuals of the 1st stage + 2nd stage fitted values.
 
 ## Evaluation Metrics
 We used Mean Absolute Percentage Error (MAPE) as the error metric to evaluate prediction performance. Because we are comparing predictions of hundreds of time series with different scales, this metric allows us to scale the error (true - pred) for each time series and then average it. We also include other statistics such as median and percentiles to get a broader understanding of the aggregate performance.
 
-For a Test Set including the real prices of December 2022, the MAPE of the predictions of the model trained with data until November 2022 has the following statistics:
+For a Test Set including the real prices of December 2022, the MAPE of the predictions of a model trained with data until November 2022 has the following statistics:
 
-| Statistic |  |
+| Statistic |  MAPE|
 | --- | ----------- |
 | Mean | 12.7% |
 | STD | 15.5% |
