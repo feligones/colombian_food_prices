@@ -20,6 +20,8 @@ pydantic = "*"
 uvicorn = "*"
 httpx = "*"
 openpyxl = "*"
+dash = "*"
+plotly = "*"
 
 [dev-packages]
 matplotlib = "*"

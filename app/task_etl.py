@@ -37,12 +37,12 @@ print("Consolidate dataframes: Done!")
 prices_dataframe['date'] = pd.to_datetime(prices_dataframe['date'])
 
 # Extract market department/municipality
-prices_dataframe['department'] = prices_dataframe['market'].str.split(',',expand=True)[0]
+# prices_dataframe['department'] = prices_dataframe['market'].str.split(',',expand=True)[0]
 
 # Preprocess text from string columns: group, product, market and department
-prices_dataframe['group'] = prices_dataframe['group'].apply(uts.clean_text)
-prices_dataframe['product'] = prices_dataframe['product'].apply(uts.clean_text)
-prices_dataframe['market'] = prices_dataframe['market'].apply(uts.clean_text)
+# prices_dataframe['group'] = prices_dataframe['group'].apply(uts.clean_text)
+# prices_dataframe['product'] = prices_dataframe['product'].apply(uts.clean_text)
+# prices_dataframe['market'] = prices_dataframe['market'].apply(uts.clean_text)
 
 print("Data processing: Done!")
 
@@ -53,9 +53,9 @@ prices_dataframe = prices_dataframe.reindex(date_range)
 
 # Select Columns (Timeseries) with minimum observations 
 # (Condition: all monthly datapoints in the last 3 years)
-selected_series = prices_dataframe[-36:].dropna(axis = 1).columns
+# selected_series = prices_dataframe[-36:].dropna(axis = 1).columns
 #print(f"Selected time series : {len(selected_series)} out of {prices_dataframe.shape[1]} in total")
-prices_dataframe = prices_dataframe.loc[:, selected_series]
+# prices_dataframe = prices_dataframe.loc[:, selected_series]
 
 # Unstack Multindex and rename columns
 prices_dataframe = prices_dataframe.unstack().reset_index(['group', 'product', 'market']).reset_index()
