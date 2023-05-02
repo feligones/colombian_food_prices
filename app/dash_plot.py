@@ -35,7 +35,8 @@ app.layout = html.Div([
     ),
     html.Label("Productos:", style={'fontSize':30, 'textAlign':'center'}),
     dcc.Dropdown(id='product-dpdn',
-                 options=[],value = []),
+                 options=[],
+                 value = ['Huevo rojo AA']),
     html.Div(id='graph-container', children=[])
 ])
 
@@ -60,7 +61,7 @@ def set_product_options(chosen_market):
 )
 
 def graph_update(market_value, product_value):
-    print(market_value, product_value)
+    # print(market_value, product_value)
     filter_df = df.loc[
         (df['product'] == product_value)&
         (df['market'] == market_value)
