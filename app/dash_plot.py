@@ -10,7 +10,7 @@ from conf import utils as uts
 from conf import settings as sts
 
 # Create a Dash application
-app = dash.Dash()
+app = dash.Dash(__name__)
 
 # Load the dataset from a saved artifact
 df = uts.load_artifact('prices_dataframe', sts.LOCAL_ARTIFACTS_PATH)
@@ -19,21 +19,91 @@ df = uts.load_artifact('prices_dataframe', sts.LOCAL_ARTIFACTS_PATH)
 unique_markets = df['market'].unique()
 unique_products = df['product'].unique()
 
+most_important_markets = [
+    'medellin central mayorista de antioquia', 
+    'bogota dc corabastos',
+    'cucuta cenabastos',
+    'barranquilla barranquillita'
+    ]
+
 # Define the layout of the web page
-app.layout = html.Div([
-    html.Label("Central de Abasto:", style={'fontSize':30, 'textAlign':'center'}),
-    dcc.Dropdown(
-        id='market-dpdn',
-        options=[{'label': s, 'value': s} for s in sorted(unique_markets)],
-        value='Medellín, Central Mayorista de Antioquia',
-        clearable=False
-    ),
-    html.Label("Productos:", style={'fontSize':30, 'textAlign':'center'}),
-    dcc.Dropdown(id='product-dpdn',
-                 options=[],
-                 value = ['Huevo rojo AA']),
-    html.Div(id='graph-container', children=[])
-])
+app.layout = html.Div(
+    style={
+        'font-family': 'Arial, sans-serif',
+        'padding': '30px',
+        'background-color': '#f8f8f8'
+    },
+    children=[
+        html.H1(
+            'Termómetro de Precios en las Centrales de Abasto de Colombia',
+            style={
+                'text-align': 'center',
+                'color': '#333333',
+                'font-size': '32px',
+                'margin-bottom': '30px',
+                'text-transform': 'uppercase',
+                'letter-spacing': '2px'
+            }
+        ),
+
+        html.Div(
+            style={
+                'text-align': 'center',
+                'margin-bottom': '20px'
+            },
+            children=[
+                html.H2(
+                    'Central de Abasto',
+                    style={'color': '#333333', 'font-size': '24px', 'margin-bottom': '10px'}
+                ),
+                dcc.Dropdown(
+                    id='market-dpdn',
+                    options=[{'label': s.upper(), 'value': s} for s in sorted(unique_markets)],
+                    value='Medellín, Central Mayorista de Antioquia',
+                    clearable=False,
+                    style={'font-size': '16px'}
+                )
+            ]
+        ),
+
+        html.Div(
+            style={
+                'text-align': 'center',
+                'margin-bottom': '50px'
+            },
+            children=[
+                html.H2(
+                    'Producto',
+                    style={'color': '#333333', 'font-size': '24px', 'margin-bottom': '10px'}
+                ),
+                dcc.Dropdown(
+                    id='product-dpdn',
+                    options=[],
+                    value='Huevo rojo AA',
+                    clearable=False,
+                    style={ 'font-size': '16px'}
+                )
+            ]
+        ),
+
+        html.Div(
+            id='graph-container-1',
+            style={'margin-bottom': '30px'}
+        ),
+        html.Div(
+            id='graph-container-2',
+            style={'margin-bottom': '30px'}
+        ),
+        html.Div(
+            id='graph-container-3',
+            style={'margin-bottom': '30px'}
+        ),
+        html.Div(
+            id='graph-container-4'
+        )
+    ]
+)
+
 
 # Define a callback function to update the product dropdown menu based on the selected market
 @app.callback(
@@ -43,20 +113,24 @@ app.layout = html.Div([
 )
 def set_product_options(chosen_market):
     # Filter the dataset by the chosen market
-    dff = df[df['market']==chosen_market]
+    dff = df[df['market'] == chosen_market]
     # Get unique products available in the filtered dataset
-    products_of_market = [{'label': c, 'value': c} for c in sorted(dff['product'].unique())]
+    products_of_market = [{'label': c.upper(), 'value': c} for c in sorted(dff['product'].unique())]
     # Set the default product selection to the first available product
-    values_selected = [x['value'] for x in products_of_market][0]
+    values_selected = products_of_market[0]['value']
     # Return the options for the product dropdown menu and the default selection
     return products_of_market, values_selected
 
+
 # Define a callback function to update the graph based on the selected market and product
 @app.callback(
-    Output('graph-container', 'children'),
+    Output('graph-container-1', 'children'),
+    Output('graph-container-2', 'children'),
+    Output('graph-container-3', 'children'),
+    Output('graph-container-4', 'children'),
     Input('market-dpdn', 'value'),
     Input('product-dpdn', 'value'),
-    prevent_initial_call=Input('market-dpdn', 'value') != None and Input('product-dpdn', 'value') != None
+    prevent_initial_call=True
 )
 def graph_update(market_value, product_value):
     # Filter the dataset by the selected market and product
@@ -64,17 +138,66 @@ def graph_update(market_value, product_value):
         (df['product'] == product_value) &
         (df['market'] == market_value)
     ].copy()
+    filter_df.sort_values('date', inplace=True)
+    filter_df['mean_price_diff_m'] = 100 * filter_df['mean_price'].diff(1) / filter_df['mean_price'].shift(1)
+    filter_df['mean_price_diff_y'] = 100 * filter_df['mean_price'].diff(12) / filter_df['mean_price'].shift(12)
+    filter_df['color_m'] = filter_df['mean_price_diff_m'].apply(lambda x: 'Positive' if x >= 0 else 'Negative')
+    filter_df['color_y'] = filter_df['mean_price_diff_y'].apply(lambda x: 'Positive' if x >= 0 else 'Negative')
+
+    # Define the color mapping
+    color_map = {'Positive': '#00b140', 'Negative': '#ff5050'}
+
     # Create a line plot using Plotly Express
-    fig = px.line(filter_df, x='date', y='mean_price', markers=True)
+    fig_level = px.line(filter_df, x='date', y='mean_price', markers=True)
     # Set the title and axis labels of the plot
-    fig.update_layout(
-        title=f'{product_value} IN {market_value}',
+    fig_level.update_layout(
+        title=f'Nivel de Precios de {product_value.upper()} en {market_value.upper()}',
         xaxis_title='Fecha',
-        yaxis_title='Precio $'
+        yaxis_title='Precio $',
+        template='plotly_white'
     )
+
+    fig_change_m = px.bar(filter_df, x='date', y='mean_price_diff_m', color='color_m', color_discrete_map=color_map)
+    fig_change_m.update_layout(
+        title=f'Cambio % Mensual {product_value.upper()} en {market_value.upper()}',
+        xaxis_title='Fecha',
+        yaxis_title='Cambio Precio % M/M',
+        showlegend=False,
+        template='plotly_white'
+    )
+
+    fig_change_y = px.bar(filter_df, x='date', y='mean_price_diff_y', color='color_y', color_discrete_map=color_map)
+    fig_change_y.update_layout(
+        title=f'Cambio % Anual {product_value.upper()} en {market_value.upper()}',
+        xaxis_title='Fecha',
+        yaxis_title='Cambio Precio % Y/Y',
+        showlegend=False,
+        template='plotly_white'
+    )
+
+    # Create a line plot using Plotly Express for multiple markets
+    multi_market_df = df.loc[
+        (df['product'] == product_value) & 
+        (df['market'].isin(most_important_markets + [market_value]))
+        ].copy()
+    multi_market_df.sort_values(['market', 'date'], inplace=True)
+    fig_multi_market = px.line(multi_market_df, x='date', y='mean_price', color='market', markers=True)
+    fig_multi_market.update_layout(
+        title=f'Comportamiento del Precio de {product_value.upper()} en las Centrales de Abasto de Colombia',
+        xaxis_title='Fecha',
+        yaxis_title='Precio $',
+        plot_bgcolor='#f8f8f8'
+    )
+
     # Return a Plotly graph object
-    return dcc.Graph(id='display-map', figure=fig)  
+    return (
+        dcc.Graph(figure=fig_level),
+        dcc.Graph(figure=fig_change_m),
+        dcc.Graph(figure=fig_change_y),
+        dcc.Graph(figure=fig_multi_market),
+    )
+
 
 # Run the Dash application
-if __name__ == '__main__': 
+if __name__ == '__main__':
     app.run_server(debug=True)
