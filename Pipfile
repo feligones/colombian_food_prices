@@ -22,6 +22,8 @@ httpx = "*"
 openpyxl = "*"
 dash = "*"
 plotly = "*"
+boto3 = "*"
+python-dotenv = "*"
 
 [dev-packages]
 matplotlib = "*"

@@ -1,12 +1,26 @@
 import os
-# os.chdir(os.environ['PWD'])
-# print(os.getcwd())
+from dotenv import load_dotenv
 
 import pandas as pd
 from conf import settings as sts
 from conf import utils as uts
+import boto3
+from datetime import datetime
 import nltk
 nltk.download('punkt')
+
+# Load ENV secrets
+assert load_dotenv()
+AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
+AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
+AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
+
+# Create an S3 client
+s3_client = boto3.client(
+    's3',
+    aws_access_key_id=AWS_ACCESS_KEY,
+    aws_secret_access_key=AWS_SECRET_KEY
+)
 
 # Consolidate Dataset from Remote Separate Excel Files
 _dataframe_list = []
@@ -55,5 +69,14 @@ prices_dataframe.columns = ['date', 'group', 'product', 'market', 'mean_price']
 
 print("Batch reindexing and series selection: Done!")
 
-# Save DataFrame as Artifact
-uts.dump_artifact(prices_dataframe, 'prices_dataframe', path=sts.LOCAL_ARTIFACTS_PATH)
+# Save DataFrame to S3 Bucket
+date_id = datetime.now().strftime(format = "%Y%m%d%H%M%S")
+
+LOCAL_FILE_PATH = sts.LOCAL_DATA_PATH + f'prices_dataframe_{date_id}.csv'
+S3_FILE_PATH = sts.S3_PROJECT_PATH + f'prices_dataframe_{date_id}.csv'
+
+prices_dataframe.to_csv(LOCAL_FILE_PATH, index=False)
+
+s3_client.upload_file(LOCAL_FILE_PATH, AWS_BUCKET_NAME, S3_FILE_PATH)
+
+print("Dataframe saved in S3: Done!")

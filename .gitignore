@@ -1,7 +1,8 @@
 *.xlsx
-*.csv
 **/*.ipynb_checkpoints/
 .ipynb_checkpoints
 *.pkl
 *.pickle
 *.pyc
+.env
+*.csv

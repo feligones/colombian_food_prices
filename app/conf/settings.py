@@ -3,6 +3,7 @@ REMOTE_URL_PATH = "https://www.dane.gov.co/files/investigaciones/agropecuario/si
 LOCAL_DATA_PATH = "data/"
 LOCAL_ARTIFACTS_PATH = 'artifacts/'
 FINAL_PRICE_DATASET = "final_prices_dataset.csv"
+S3_PROJECT_PATH = 'personal-projects/colombian_food_prices/'
 
 REMOTE_FILE_PATHS = [
     "series-historicas-precios-mayoristas-2023.xlsx",
