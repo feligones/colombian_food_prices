@@ -15,7 +15,7 @@ from conf import utils as uts
 from conf import settings as sts
 
 # Load ENV secrets
-assert load_dotenv()
+assert load_dotenv(), "Environment file couldnt load"
 AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
 AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
 AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
@@ -180,7 +180,7 @@ def graph_update(market_value, product_value):
     fig_level.update_layout(
         title=f'Nivel de Precios de {product_value.upper()} en {market_value.upper()}',
         xaxis_title='Fecha',
-        yaxis_title='Precio $',
+        yaxis_title='Precio $ / Kg',
         template='plotly_white'
     )
 

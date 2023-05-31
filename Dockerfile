@@ -1,16 +1,23 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.10-slim
+# Use a Python base image
+FROM python:3.10-slim
 
-RUN pip --no-cache-dir install pipenv
-
+# Set the working directory
 WORKDIR /app
 
-COPY ["Pipfile", "Pipfile.lock", "./"]
+# Copy the Pipfile and Pipfile.lock
+COPY Pipfile Pipfile.lock ./
 
-RUN pipenv install --deploy --system && \
-    rm -rf /root/.cache
+# Install Pipenv
+RUN pip install --no-cache-dir pipenv
 
-EXPOSE 80
+# Install project dependencies using Pipenv
+RUN pipenv install --deploy --system
 
-COPY . .
+# Copy the application code into the container
+COPY app ./
 
-CMD ["python", "app/bridge.py"]
+# Copy the .env file into the container
+COPY .env ./
+
+# Set the entry point command to start the Dash application
+CMD ["pipenv", "run", "gunicorn", "dash_plot:app", "-b", "0.0.0.0:8050"]
