@@ -1,19 +1,46 @@
+
+import os
 import dash
 from dash import html
 import plotly.graph_objects as go
 from dash import dcc
 import plotly.express as px
 from dash.dependencies import Input, Output
+import boto3
+from dotenv import load_dotenv
+import pandas as pd
 
 # Importing custom modules
 from conf import utils as uts
 from conf import settings as sts
 
+# Load ENV secrets
+assert load_dotenv()
+AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
+AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
+AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
+
+# Create an S3 client
+s3_client = boto3.client(
+    's3',
+    aws_access_key_id=AWS_ACCESS_KEY,
+    aws_secret_access_key=AWS_SECRET_KEY
+)
+
+# Load the dataset from S3
+objects = s3_client.list_objects_v2(Bucket=AWS_BUCKET_NAME, Prefix = sts.S3_PROJECT_PATH)
+csv_objects = [obj for obj in objects['Contents'] if obj['Key'].endswith('.csv')]
+last_csv_object = sorted(csv_objects, key=lambda x: x['LastModified'], reverse=True)[0]
+response = s3_client.get_object(
+    Bucket=AWS_BUCKET_NAME,
+    Key=last_csv_object['Key']
+)
+
+df = pd.read_csv(response['Body'])
+
+
 # Create a Dash application
 app = dash.Dash(__name__)
-
-# Load the dataset from a saved artifact
-df = uts.load_artifact('prices_dataframe', sts.LOCAL_ARTIFACTS_PATH)
 
 # Get unique markets and products in the dataset
 unique_markets = df['market'].unique()
@@ -59,7 +86,7 @@ app.layout = html.Div(
                 dcc.Dropdown(
                     id='market-dpdn',
                     options=[{'label': s.upper(), 'value': s} for s in sorted(unique_markets)],
-                    value='Medellín, Central Mayorista de Antioquia',
+                    value=most_important_markets[0],
                     clearable=False,
                     style={'font-size': '16px'}
                 )
@@ -79,7 +106,7 @@ app.layout = html.Div(
                 dcc.Dropdown(
                     id='product-dpdn',
                     options=[],
-                    value='Huevo rojo AA',
+                    value='huevo rojo aa',
                     clearable=False,
                     style={ 'font-size': '16px'}
                 )
