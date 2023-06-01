@@ -72,11 +72,14 @@ print("Batch reindexing and series selection: Done!")
 # Save DataFrame to S3 Bucket
 date_id = datetime.now().strftime(format = "%Y%m%d%H%M%S")
 
-LOCAL_FILE_PATH = sts.LOCAL_DATA_PATH + f'prices_dataframe_{date_id}.csv'
-S3_FILE_PATH = sts.S3_PROJECT_PATH + f'prices_dataframe_{date_id}.csv'
+LOCAL_FILE_PATH = sts.LOCAL_DATA_PATH + f'prices_dataframe_{date_id}.parquet'
+S3_FILE_PATH = sts.S3_PROJECT_PATH + f'prices_dataframe_{date_id}.parquet'
 
-prices_dataframe.to_csv(LOCAL_FILE_PATH, index=False)
+prices_dataframe.to_parquet(LOCAL_FILE_PATH, index=False)
 
 s3_client.upload_file(LOCAL_FILE_PATH, AWS_BUCKET_NAME, S3_FILE_PATH)
+
+# Remove Local File
+os.remove(LOCAL_FILE_PATH)
 
 print("Dataframe saved in S3: Done!")

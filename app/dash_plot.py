@@ -29,15 +29,14 @@ s3_client = boto3.client(
 
 # Load the dataset from S3
 objects = s3_client.list_objects_v2(Bucket=AWS_BUCKET_NAME, Prefix = sts.S3_PROJECT_PATH)
-csv_objects = [obj for obj in objects['Contents'] if obj['Key'].endswith('.csv')]
-last_csv_object = sorted(csv_objects, key=lambda x: x['LastModified'], reverse=True)[0]
-response = s3_client.get_object(
-    Bucket=AWS_BUCKET_NAME,
-    Key=last_csv_object['Key']
-)
+pqt_objects = [obj for obj in objects['Contents'] if obj['Key'].endswith('.parquet')]
+last_pqt_object = sorted(pqt_objects, key=lambda x: x['LastModified'], reverse=True)[0]
 
-df = pd.read_csv(response['Body'])
+s3_client.download_file(Filename = 'data.parquet', Bucket=AWS_BUCKET_NAME, Key=last_pqt_object['Key'])
 
+df = pd.read_parquet('data.parquet')
+
+os.remove('data.parquet')
 
 # Create a Dash application
 app = dash.Dash(__name__)
@@ -224,6 +223,8 @@ def graph_update(market_value, product_value):
         dcc.Graph(figure=fig_multi_market),
     )
 
+# Make the app callable
+app = app.server 
 
 # Run the Dash application
 if __name__ == '__main__':

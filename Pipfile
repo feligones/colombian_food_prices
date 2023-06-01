@@ -23,6 +23,8 @@ boto3 = "*"
 python-dotenv = "*"
 gunicorn = "*"
 fastapi = "*"
+pyarrow = "*"
+fastparquet = "*"
 
 [dev-packages]
 matplotlib = "*"
