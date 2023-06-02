@@ -7,3 +7,4 @@
 .env
 *.csv
 playground.ipynb
+*.pyc
