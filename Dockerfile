@@ -1,5 +1,5 @@
-# Use a Python base image
-FROM python:3.10-slim
+# Use a Python base image compatible with Elastic Beanstalk
+FROM python:3.10-slim-buster
 
 # Set the working directory
 WORKDIR /app
@@ -11,12 +11,12 @@ COPY Pipfile Pipfile.lock ./
 RUN pip install --no-cache-dir pipenv
 
 # Install project dependencies using Pipenv
-RUN pipenv install --deploy --system
+RUN pipenv install --deploy --system --ignore-pipfile
 
 # Copy the application code into the container
 COPY app ./
 
-# Copy the .env file into the container
+# Copy the .env file into the container (optional)
 COPY .env ./
 
 # Set the entry point command to start the Dash application

@@ -31,6 +31,7 @@ matplotlib = "*"
 seaborn = "*"
 openpyxl = "*"
 ipykernel = "*"
+awsebcli = "*"
 
 [requires]
 python_version = "3.10"
