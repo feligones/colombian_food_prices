@@ -224,7 +224,7 @@ def graph_update(market_value, product_value):
     )
 
 # Make the app callable
-server = app.server 
+app = app.server 
 
 # Run the Dash application
 if __name__ == '__main__':
