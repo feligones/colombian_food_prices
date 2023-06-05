@@ -1,0 +1,13 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 784540774442.dkr.ecr.us-east-1.amazonaws.com/prices_dash_aws:v3
+    ports:
+      - 8050:8050
+    env_file:
+      - .env
+    volumes:
+      - ./app:/app

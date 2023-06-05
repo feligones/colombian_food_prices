@@ -15,7 +15,7 @@ from conf import utils as uts
 from conf import settings as sts
 
 # Load ENV secrets
-assert load_dotenv(), "Environment file couldnt load"
+# assert load_dotenv(), "Environment file couldnt load"
 AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
 AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
 AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
