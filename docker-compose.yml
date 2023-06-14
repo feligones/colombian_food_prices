@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: 784540774442.dkr.ecr.us-east-1.amazonaws.com/prices_dash_aws:v3
+    image: prices_dash
     ports:
       - 8050:8050
     env_file:
