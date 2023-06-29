@@ -6,7 +6,7 @@ FINAL_PRICE_DATASET = "final_prices_dataset.csv"
 S3_PROJECT_PATH = 'personal-projects/colombian_food_prices/'
 
 REMOTE_FILE_PATHS = [
-    "series-historicas-precios-mayoristas-2023.xlsx",
+    "anex-SIPSA-SerieHistoricaMayorista-2023.xlsx",
     "series-historicas-precios-mayoristas-2022.xlsx",
     "series-historicas-precios-mayoristas-2021.xlsx",
     "series-historicas-precios-mayoristas-2020.xlsx",

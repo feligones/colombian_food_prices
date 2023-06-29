@@ -25,6 +25,7 @@ gunicorn = "*"
 fastapi = "*"
 pyarrow = "*"
 fastparquet = "*"
+zeep = "*"
 
 [dev-packages]
 matplotlib = "*"

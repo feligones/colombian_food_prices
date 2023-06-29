@@ -1,6 +1,4 @@
 import os
-from dotenv import load_dotenv
-
 import pandas as pd
 from conf import settings as sts
 from conf import utils as uts
@@ -10,7 +8,6 @@ import nltk
 nltk.download('punkt')
 
 # Load ENV secrets
-assert load_dotenv()
 AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
 AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
 AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME")
@@ -77,9 +74,9 @@ S3_FILE_PATH = sts.S3_PROJECT_PATH + f'prices_dataframe_{date_id}.parquet'
 
 prices_dataframe.to_parquet(LOCAL_FILE_PATH, index=False)
 
-s3_client.upload_file(LOCAL_FILE_PATH, AWS_BUCKET_NAME, S3_FILE_PATH)
+# s3_client.upload_file(LOCAL_FILE_PATH, AWS_BUCKET_NAME, S3_FILE_PATH)
 
 # Remove Local File
-os.remove(LOCAL_FILE_PATH)
+# os.remove(LOCAL_FILE_PATH)
 
 print("Dataframe saved in S3: Done!")
