@@ -64,7 +64,7 @@ def load_dataset(filename, local_path, url_path):
         url = url_path + filename
         # Request file on URL
         resp = requests.get(url)
-        assert resp.status_code == 200, resp.status_code
+        assert resp.status_code == 200, resp.status_code + " - " + filename
         # Save requested file locally
         file = open(file_path, 'wb')
         file.write(resp.content)

@@ -7,7 +7,6 @@ from dash import dcc
 import plotly.express as px
 from dash.dependencies import Input, Output
 import boto3
-from dotenv import load_dotenv
 import pandas as pd
 
 # Importing custom modules

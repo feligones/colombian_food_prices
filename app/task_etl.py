@@ -23,9 +23,14 @@ s3_client = boto3.client(
 _dataframe_list = []
 
 # Loop for every file URL path
-for url in sts.REMOTE_FILE_PATHS:
+for i, url in enumerate(sts.REMOTE_FILE_PATHS):
     # Load Excel file and preprocess it
-    dataframe = uts.load_dataset(url, local_path=sts.LOCAL_DATA_PATH, url_path=sts.REMOTE_URL_PATH)
+    if i == 0:
+        remote_path = "https://www.dane.gov.co/files/operaciones/SIPSA/"
+    else:
+        remote_path = sts.REMOTE_URL_PATH
+
+    dataframe = uts.load_dataset(url, local_path=sts.LOCAL_DATA_PATH, url_path=remote_path)
     _dataframe_list.append(dataframe)
 
 # Concat all pandas DFs and name columns
@@ -74,9 +79,9 @@ S3_FILE_PATH = sts.S3_PROJECT_PATH + f'prices_dataframe_{date_id}.parquet'
 
 prices_dataframe.to_parquet(LOCAL_FILE_PATH, index=False)
 
-# s3_client.upload_file(LOCAL_FILE_PATH, AWS_BUCKET_NAME, S3_FILE_PATH)
+s3_client.upload_file(LOCAL_FILE_PATH, AWS_BUCKET_NAME, S3_FILE_PATH)
 
 # Remove Local File
-# os.remove(LOCAL_FILE_PATH)
+os.remove(LOCAL_FILE_PATH)
 
 print("Dataframe saved in S3: Done!")
