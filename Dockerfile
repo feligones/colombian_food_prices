@@ -17,7 +17,9 @@ RUN pipenv install --deploy --system --ignore-pipfile
 COPY app ./
 
 # Copy the .env file into the container (optional)
-# COPY .env ./
+COPY .env ./
+
+EXPOSE 8050
 
 # Set the entry point command to start the Dash application
 CMD ["pipenv", "run", "gunicorn", "dash_plot:app", "-b", "0.0.0.0:8050"]
