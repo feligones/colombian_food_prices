@@ -22,4 +22,4 @@ COPY .env ./
 EXPOSE 8050
 
 # Set the entry point command to start the Dash application
-CMD ["pipenv", "run", "gunicorn", "dash_plot:app", "-b", "0.0.0.0:8050"]
+CMD ["pipenv", "run", "gunicorn", "dash_plot:server", "-b", "0.0.0.0:8050"]
