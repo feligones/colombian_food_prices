@@ -1,5 +1,5 @@
 # Use a Python base image compatible with Elastic Beanstalk
-FROM python:3.10-slim-buster
+FROM python:3.10-slim
 
 # Set the working directory
 WORKDIR /app
